@@ -29,7 +29,6 @@ def scan(ip):
     for element in answered_list:
         client_dict = {"ip" : element[1].psrc, "mac" : element[1].hwsrc, "vendor" : convert_to_vendor(element[1].hwsrc)}
         clients_list.append(client_dict)
-        timeout(5)
 
     return clients_list
 
