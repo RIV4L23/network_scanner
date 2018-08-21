@@ -2,6 +2,14 @@
 
 import scapy.all as scapy
 import argparse
+import requests
+
+
+def convert_to_vendor(mac_address):
+    vendor = requests.get('http://api.macvendors.com/' + mac_address).text
+
+    return vendor
+
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -19,16 +27,17 @@ def scan(ip):
 
     clients_list = []
     for element in answered_list:
-        client_dict = {"ip" : element[1].psrc, "mac" : element[1].hwsrc}
+        client_dict = {"ip" : element[1].psrc, "mac" : element[1].hwsrc, "vendor" : convert_to_vendor(element[1].hwsrc)}
         clients_list.append(client_dict)
+        timeout(5)
 
     return clients_list
 
 def print_result(results_list):
-    print("IP\t\t\tMAC Address")
-    print("===================================")
+    print("IP\t\t\tMAC Address\t\t\tVendor")
+    print("________________________________________________________________________")
     for client in results_list:
-        print(client["ip"] + "\t\t" + client["mac"])
+        print(client["ip"] + "\t\t" + client["mac"] + "\t\t" + client["vendor"] + "\n")
 
 options = get_arguments()
 scan_results = scan(options.target)
